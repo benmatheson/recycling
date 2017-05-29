@@ -10,7 +10,7 @@
      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"
    integrity="sha512-07I2e+7D8p6he1SIM+1twR5TIrhUQn9+I6yjqD53JQjFiMf8EtC93ty0/5vJTZGF8aAocvHYNEDJajGdNx1IsQ=="
    crossorigin=""/>
- 
+
  
 
     <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet-src.js"></script>
@@ -46,26 +46,15 @@
    		padding-bottom: 1%;
    		text-align: center;
 
-
-   	}
-
-   	#info  {
-   		font-family: arial, sans-serif;
-   		font-size: 1em;
-   		line-height: 70%;
-   		padding-bottom: 1%;
-   		text-align: center;
-
-
    	}
 
    </style>
   </head>
 
   <body>
+ <h1>Can I recycle?</h1>
  <h2></h2>
- <div id="result">Can I recycle?</div>
- <div id="info"><br></div>
+ <div id="result"></div>
   <div id="ak"></div>
 
   <script type="text/javascript">
@@ -157,16 +146,14 @@ var triangleMapped = L.geoJSON(triangle).addTo(myMap);
 <!-- it works -->
 
 
-
-
 navigator.geolocation.getCurrentPosition(function(location) {
   console.log(location.coords.latitude);
   console.log(location.coords.longitude);
   console.log(location.coords.accuracy);
   var lat = location.coords.latitude;
 var lon = location.coords.longitude;
-var m= L.marker([lat, lon]).addTo(myMap);
-m.bindTooltip("Your Location").openTooltip().addTo(myMap);
+L.marker([lat, lon]).addTo(myMap);
+
 
 
 var point1 = turf.point([lon,lat]);	
@@ -177,16 +164,14 @@ console.log("this is point 1"+ point1);
 
 var isInsideTriangle = turf.inside(point1, traingleNot);
 
+var info = "Learn more about recycling here"
 if (isInsideTriangle==true) {
-	var result = document.getElementById("result").innerHTML= "Yes, you can recycle!";
-	var result = document.getElementById("info").innerHTML+= '<a href="https://www.muni.org/Departments/SWS/recycle/Pages/default.aspx"> Learn more about recycling here</a>';
+document.getElementById("result").innerHTML= "Yes, you can recycle!"
+result += info;
 }
 
 else
-	{document.getElementById('result').innerHTML= "No, you don't live in the recycling zone";
-document.getElementById("info").innerHTML+= '<a href="https://www.muni.org/Departments/SWS/recycle/Pages/default.aspx"> Learn more about recycling here</a>';
-	
-};
+{document.getElementById('result').innerHTML= "No, you don't live in the recycling zone."};
 
 
 console.log("are we in the feature not feature CLASS !triange "+ isInsideTriangle);
