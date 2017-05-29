@@ -87,6 +87,12 @@ var recycling = L.esri.featureLayer({
       }).addTo(myMap);
 
 
+var triangleStyle = {
+  "color": "red",
+  "fillOpacity": .4,
+  "stroke": false
+};
+
 var triangle = 
 {
   "type": "FeatureCollection",
@@ -150,7 +156,7 @@ var traingleNot = {
     };
 
 
-var triangleMapped = L.geoJSON(triangle).addTo(myMap);
+var triangleMapped = L.geoJSON(triangle, {style:triangleStyle}).addTo(myMap);
 
 
 // doint it turf style 
