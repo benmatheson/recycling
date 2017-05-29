@@ -1,0 +1,197 @@
+
+   
+
+   <!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Anchorage Recycling</title>
+
+     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"
+   integrity="sha512-07I2e+7D8p6he1SIM+1twR5TIrhUQn9+I6yjqD53JQjFiMf8EtC93ty0/5vJTZGF8aAocvHYNEDJajGdNx1IsQ=="
+   crossorigin=""/>
+
+ 
+
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet-src.js"></script>
+
+    <script src="https://unpkg.com/esri-leaflet@2.0.8"></script>
+
+   <script src="https://npmcdn.com/@turf/turf/turf.min.js"></script>
+
+   <style type="text/css">
+   	#ak {
+   		height: 500px;
+
+   	}
+
+  h1,h2 {
+   		font-family: arial, sans-serif;
+   		font-weight: bold;
+   		line-height: 60%;
+   		text-align: center;
+
+   	}
+
+   	h1 {
+   		font-size: 3em;
+
+   	}
+
+   	#result  {
+   		font-family: arial, sans-serif;
+   		font-size: 3em;
+   		font-weight: bold;
+   		line-height: 70%;
+   		padding-bottom: 1%;
+   		text-align: center;
+
+   	}
+
+   </style>
+  </head>
+
+  <body>
+ <h1>Can I recycle?</h1>
+ <h2></h2>
+ <div id="result"></div>
+  <div id="ak"></div>
+
+  <script type="text/javascript">
+
+  	var myMap = L.map('ak').setView([61.1781, -149.9003], 11);
+
+
+L.tileLayer('http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', {
+	attribution: ''
+}).addTo(myMap);
+
+//
+
+// AK GIS
+//http://gis1.dnr.alaska.gov/terrapixel/ips/tilesets/BDL/BDL/default/smerc/{z}/{y}/{x}.jop?INSTANCE=OIM_BDL
+
+var recycling = L.esri.featureLayer({
+        url: "https://www.ancgis.com/arcgis/rest/services/SolidWasteServices/SWS_ServiceArea/MapServer/0/"
+      }).addTo(myMap);
+
+
+var triangle = 
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -149.7898131608963,
+              61.17966710927927
+            ],
+            [
+              -149.74483788013458,
+              61.20076177668739
+            ],
+            [
+              -149.68990623950958,
+              61.178260295979776
+            ],
+            [
+              -149.7898131608963,
+              61.17966710927927
+            ]
+          ]
+        ]
+      },
+      "properties": {}
+    }
+  ]
+};
+
+var traingleNot = {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -149.7898131608963,
+              61.17966710927927
+            ],
+            [
+              -149.74483788013458,
+              61.20076177668739
+            ],
+            [
+              -149.68990623950958,
+              61.178260295979776
+            ],
+            [
+              -149.7898131608963,
+              61.17966710927927
+            ]
+          ]
+        ]
+      },
+      "properties": {}
+    };
+
+
+var triangleMapped = L.geoJSON(triangle).addTo(myMap);
+
+
+// doint it turf style 
+<!-- it works -->
+
+
+navigator.geolocation.getCurrentPosition(function(location) {
+  console.log(location.coords.latitude);
+  console.log(location.coords.longitude);
+  console.log(location.coords.accuracy);
+  var lat = location.coords.latitude;
+var lon = location.coords.longitude;
+L.marker([lat, lon]).addTo(myMap);
+
+
+
+var point1 = turf.point([lon,lat]);	
+
+console.log("this is point 1"+ point1);
+
+//this seems to work w/ geojson if it's not a feature COLLECTIONB but just a feature
+
+var isInsideTriangle = turf.inside(point1, traingleNot);
+
+if (isInsideTriangle==true) {
+document.getElementById("result").innerHTML= "Yes, you can recycle!"
+}
+
+else
+{document.getElementById('result').innerHTML= "No, you don't live in the recycling zone."};
+
+
+console.log("are we in the feature not feature CLASS !triange "+ isInsideTriangle);
+
+var testing = turf.inside(point1, recycling);
+console.log("this is testing"+testing);
+
+
+
+var isInsideReal = turf.inside(point1, recycling);
+console.log("Using the actualy service" + isInsideReal)
+//document.getElementByID()
+});
+
+// problematic here, I'm trying to wrtite some goddam text to an html element
+//res = document.getElementByID('result');
+
+//res.innerHTML("Congratulations, you may or may not be able to recycle");
+
+
+
+  </script>
+
+  </body>
+</html>
